@@ -371,9 +371,17 @@ button:
     name: "Restart"
 
 time:
-  - platform: homeassistant
+  - platform: pcf85063
     id: esptime
-    timezone: Europe/London # Adjust to your timezone
+    # repeated synchronization is not necessary unless the external RTC
+    # is much more accurate than the internal clock
+    update_interval: never
+  - platform: homeassistant
+    # instead try to synchronize via network repeatedly ...
+    on_time_sync:
+      then:
+        # ... and update the RTC when the synchronization was successful
+        pcf85063.write_time:
 
 
 binary_sensor:
